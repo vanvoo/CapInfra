@@ -1,0 +1,96 @@
+---
+- name: Play to create EC2 resources and instances.
+  hosts: localhost
+  vars:
+    aws_region: us-east-1
+  tasks:
+    - name: Task to create the VPC
+      ec2_vpc_net:
+        name: ansible_vpc
+        cidr_block: 10.10.0.0/16
+        region: "{{ aws_region }}"
+        tenancy: default
+      register: ansible_vpc
+
+    - name: Create an Internet Gateway and associate it to the VPC
+      ec2_vpc_igw:
+        vpc_id: "{{ ansible_vpc.vpc.id }}"
+        region: "{{ aws_region }}"
+        state: present
+      register: ansible_igw
+
+    - name: Create a subnet in the VPC
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ ansible_vpc.vpc.id }}"
+        cidr: 10.10.0.0/20
+        region: "{{ aws_region }}"
+      register: ansible_subnet
+
+    - name: Set up public subnet route table
+      ec2_vpc_route_table:
+        vpc_id: "{{ ansible_vpc.vpc.id }}"
+        region: "{{ aws_region }}"
+        subnets:
+          - "{{ ansible_subnet.subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ ansible_igw.gateway_id }}"
+
+    - name: Create AWS Security Groups
+      ec2_group:
+        name: ansible_sg
+        description: AWS Security Group created by Ansible
+        vpc_id: "{{ ansible_vpc.vpc.id }}"
+        region: "{{ aws_region }}"
+        rules:
+          - proto: tcp
+            ports:
+              - 22
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 22
+          - proto: tcp
+            ports:
+              - 8080
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 8080
+      register: ansible_sg
+
+    - name: Provision EC2 instance for Jenkins Server
+      ec2:
+        region: "{{ aws_region }}"
+        key_name: mykey
+        instance_type: t2.micro
+        image: ami-0cfc05f17eac80275
+        wait: yes
+        group: ansible_sg
+        count: 1
+        vpc_subnet_id: "{{ ansible_subnet.subnet.id }}"
+        assign_public_ip: yes
+        instance_tags: {"Name": "Jenkins"}
+
+    - name: Provision EC2 instance for Master k8s Node
+      ec2:
+        region: "{{ aws_region }}"
+        key_name: mykey
+        instance_type: t2.micro
+        image: ami-0cfc05f17eac80275
+        wait: yes
+        group: ansible_sg
+        count: 1
+        vpc_subnet_id: "{{ ansible_subnet.subnet.id }}"
+        assign_public_ip: yes
+        instance_tags: {"Name": "Master", "Cluster": "k8s"}
+
+    - name: Provision EC2 instance for Worker k8s Nodes
+      ec2:
+        region: "{{ aws_region }}"
+        key_name: mykey
+        instance_type: t2.micro
+        image: ami-0cfc05f17eac80275
+        wait: yes
+        group: ansible_sg
+        count: 2
+        vpc_subnet_id: "{{ ansible_subnet.subnet.id }}"
+        assign_public_ip: yes
+        instance_tags: {"Name": "Worker", "Cluster": "k8s"}

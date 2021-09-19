@@ -1,0 +1,10 @@
+---
+- hosts: jenkins_server
+
+  roles:
+    - jenkins
+
+- hosts: k8s_cluster
+
+  roles:
+    - k8s

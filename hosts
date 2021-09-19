@@ -1,0 +1,17 @@
+[all:vars]
+ansible_ssh_private_key_file=/home/lindavanvoorenn/.aws/mykey.pem
+ansible_ssh_user=ubuntu
+
+[jenkins_server]
+54.80.251.165
+
+[k8s_master]
+54.167.192.136
+
+[k8s_workers]
+18.232.72.19
+54.91.167.148
+
+[k8s_cluster:children]
+k8s_master
+k8s_workers
