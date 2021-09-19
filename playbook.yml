@@ -61,7 +61,7 @@
         region: "{{ aws_region }}"
         key_name: mykey
         instance_type: t2.micro
-        image: ami-0cfc05f17eac80275
+        image: ami-0747bdcabd34c712a
         wait: yes
         group: ansible_sg
         count: 1
@@ -74,7 +74,7 @@
         region: "{{ aws_region }}"
         key_name: mykey
         instance_type: t2.micro
-        image: ami-0cfc05f17eac80275
+        image: ami-0747bdcabd34c712a
         wait: yes
         group: ansible_sg
         count: 1
@@ -87,7 +87,7 @@
         region: "{{ aws_region }}"
         key_name: mykey
         instance_type: t2.micro
-        image: ami-0cfc05f17eac80275
+        image: ami-0747bdcabd34c712a
         wait: yes
         group: ansible_sg
         count: 2
