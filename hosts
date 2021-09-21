@@ -3,14 +3,14 @@ ansible_ssh_private_key_file=/home/lindavanvoorenn/.aws/mykey.pem
 ansible_ssh_user=ubuntu
 
 [jenkins_server]
-54.80.251.165
+35.170.197.205
 
 [k8s_master]
-54.167.192.136
+3.235.57.127
 
 [k8s_workers]
-18.232.72.19
-54.91.167.148
+3.235.86.140
+44.198.189.233
 
 [k8s_cluster:children]
 k8s_master
