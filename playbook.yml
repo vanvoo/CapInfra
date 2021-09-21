@@ -46,14 +46,9 @@
         rules:
           - proto: tcp
             ports:
-              - 22
+              - -1
             cidr_ip: 0.0.0.0/0
-            rule_desc: allow all on port 22
-          - proto: tcp
-            ports:
-              - 8080
-            cidr_ip: 0.0.0.0/0
-            rule_desc: allow all on port 8080
+            rule_desc: allow all
       register: ansible_sg
 
     - name: Provision EC2 instance for Jenkins Server
