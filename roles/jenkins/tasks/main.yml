@@ -47,6 +47,11 @@
       - docker-ce-cli
       - containerd.io
     state: present
+    
+- name: Add Jenkins user to the Docker group
+  user:
+    name: jenkins
+    group: docker
 
 - name: Enable service docker, and enable persistently
   become: true
