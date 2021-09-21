@@ -51,7 +51,9 @@
 - name: Add Jenkins user to the Docker group
   user:
     name: jenkins
-    group: docker
+    shell: /bin/bash
+    groups: docker
+    append: yes
 
 - name: Enable service docker, and enable persistently
   become: true
