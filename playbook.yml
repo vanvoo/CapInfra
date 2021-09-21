@@ -44,9 +44,9 @@
         vpc_id: "{{ ansible_vpc.vpc.id }}"
         region: "{{ aws_region }}"
         rules:
-          - proto: tcp
-            ports:
-              - -1
+          - proto: all
+            from_port: 10050
+            to_port: 10050
             cidr_ip: 0.0.0.0/0
             rule_desc: allow all
       register: ansible_sg
